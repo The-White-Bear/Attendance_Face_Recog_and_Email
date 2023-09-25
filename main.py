@@ -5,6 +5,7 @@ import numpy as np
 from datetime import datetime
 import pickle
 import openpyxl
+import time
 path = r'student_images'
 attendee = []
 images = []
@@ -12,7 +13,7 @@ classNames = []
 mylist = os.listdir(path)
 
 
-now = datetime.now()   #date time cho tên cột điểm danh
+now = datetime.now()  # date time cho tên cột điểm danh
 date_str = now.strftime('%d-%B-%Y')
 
 
@@ -26,9 +27,9 @@ with open(sobuoi_filename, 'r') as f:
         sobuoi = int(sobuoi_str)
     else:
         sobuoi = 1
-col_number = sobuoi 
+col_number = sobuoi
 with open(sobuoi_filename, 'w') as f:
-        f.write(f'{sobuoi+1}')
+    f.write(f'{sobuoi+1}')
 
 
 with open('Attendance.csv', 'w') as f:
@@ -67,54 +68,41 @@ def markAttendance(name):
             f.writelines(f'{name}, {time}, {date}\n')
 
             attendee.append(name.upper())
+
+
 def write_to_excel(name):
     wb = openpyxl.load_workbook("DiemDanh.xlsx")
     ws = wb['Sheet1']
-    col_name = chr(ord('D') + col_number)  # Convert the session number to column letter (D, E, F, ...)
-    cell_name = f"{col_name}1"  # Cell in row 1 for the session's attendance column
+    # Convert the session number to column letter (D, E, F, ...)
+    col_name = chr(ord('D') + col_number)
+    # Cell in row 1 for the session's attendance column
+    cell_name = f"{col_name}1"
     ws[cell_name] = f"Buoi diem danh thu{col_number}- {date_str}"
 
     for i in range(2, 80):
         if ws.cell(row=i, column=2).value in attendee:
             # Set the cell format to Boolean and write True
-            ws.cell(row=i, column=col_number + 4).value = True
+            ws.cell(row=i, column=col_number + 5).value = True
         else:
             # Set the cell format to Boolean and write False
-            ws.cell(row=i, column=col_number + 4).value = False
+            ws.cell(row=i, column=col_number + 5).value = False
 
     wb.save("DiemDanh.xlsx")
+
+
 def count_missing():
     wb = openpyxl.load_workbook("DiemDanh.xlsx")
     ws = wb['Sheet1']
-    ws['Q1'] = "Sobuoivang"
+    ws['Z1'] = "Sobuoivang"
 
     for row in range(2, 80):  # Dynamically determine the last row
-        cell = 'Q' + str(row)
-        start_col = 'E'
-        end_col = 'O'
-        formula = f'=COUNTIF({start_col}{row}:{end_col}{row}, "FALSE")'
-        ws[cell] = formula
-
-        # Evaluate the formula and store the result in cell R
-        cell_value = ws[cell].eval()
-        cell2 = 'R' + str(row)
-        ws[cell2] = cell_value
-
+        false_count = 0
+        for col in range(6, 26):  # Columns E to Q are columns 5 to 16
+            cell_value = ws.cell(row=row, column=col).value
+            if cell_value == False:
+                false_count += 1
+        ws.cell(row=row, column=26, value=false_count)
     wb.save("DiemDanh.xlsx")
-# def check_missing():
-#     wb = openpyxl.load_workbook("DiemDanh.xlsx")
-#     ws = wb['Sheet1']
-#     # Mở file để ghi tên vào
-#     with open("dsvang.txt", "w") as f:
-#         for row in range(2, 81):  # Duyệt từ hàng 2 đến hàng 80
-#             cell = 'Q' + str(row)  # Cột Q cho số buổi vắng
-#             sobuoivang = ws[cell].calculate_value()
-#             if sobuoivang is not None and int(sobuoivang) >= 2:
-#                 ten = ws[f'C{row}'].value + ' ' + ws[f'D{row}'].value
-                
-#                 f.write(ten + '\n')
-
-
 cap = cv2.VideoCapture(0)
 try:
     while True:
@@ -135,7 +123,8 @@ try:
                 y1, x2, y2, x1 = faceloc
                 y1, x2, y2, x1 = y1*4, x2*4, y2*4, x1*4
                 cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                cv2.rectangle(img, (x1, y2-35), (x2, y2), (0, 255, 0), cv2.FILLED)
+                cv2.rectangle(img, (x1, y2-35), (x2, y2),
+                              (0, 255, 0), cv2.FILLED)
                 cv2.putText(img, name, (x1+6, y2-5),
                             cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
                 markAttendance(name.upper())
@@ -147,8 +136,8 @@ except KeyboardInterrupt:
     pass  # This catches ctrl+C
 
 count_missing()  # Call count_missing even if you manually interrupt the program
-# check_missing()
-
+time.sleep(1)
+print("Thank you for using the program")
 # Optionally, you can add code here to release resources and close windows
 cap.release()
 cv2.destroyAllWindows()
