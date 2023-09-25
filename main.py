@@ -72,9 +72,10 @@ def markAttendance(name):
 
 def write_to_excel(name):
     wb = openpyxl.load_workbook("DiemDanh.xlsx")
-    ws = wb['Sheet1']
+    sheetname=wb.sheetnames
+    ws = wb[sheetname[0]]
     # Convert the session number to column letter (D, E, F, ...)
-    col_name = chr(ord('D') + col_number)
+    col_name = chr(ord('E') + col_number)
     # Cell in row 1 for the session's attendance column
     cell_name = f"{col_name}1"
     ws[cell_name] = f"Buoi diem danh thu{col_number}- {date_str}"
@@ -92,7 +93,8 @@ def write_to_excel(name):
 
 def count_missing():
     wb = openpyxl.load_workbook("DiemDanh.xlsx")
-    ws = wb['Sheet1']
+    sheetname=wb.sheetnames
+    ws = wb[sheetname[0]]
     ws['Z1'] = "Sobuoivang"
 
     for row in range(2, 80):  # Dynamically determine the last row
@@ -103,6 +105,24 @@ def count_missing():
                 false_count += 1
         ws.cell(row=row, column=26, value=false_count)
     wb.save("DiemDanh.xlsx")
+def create_dsvang_file():
+    wb = openpyxl.load_workbook("DiemDanh.xlsx")
+    sheetname = wb.sheetnames[0]
+    ws = wb[sheetname]
+
+    dsvang = []  # Danh sách tên của những người vắng hơn hoặc bằng 2 buổi
+    for row in range(2, 80):  # Tính toán dựa trên số dòng thực tế của bảng
+        sobuoivang = ws.cell(row=row, column=26).value
+        if sobuoivang is not None and sobuoivang >= 2:
+            ten = ws.cell(row=row, column=2).value
+            dsvang.append(ten)
+
+    # Ghi danh sách vào tệp "dsvang.txt"
+    with open("dsvang.txt", "w") as f:
+        for ten in dsvang:
+            f.write(f"{ten}\n")
+
+    wb.close()
 cap = cv2.VideoCapture(0)
 try:
     while True:
@@ -135,7 +155,8 @@ try:
 except KeyboardInterrupt:
     pass  # This catches ctrl+C
 
-count_missing()  # Call count_missing even if you manually interrupt the program
+count_missing()
+create_dsvang_file()  # Call count_missing even if you manually interrupt the program
 time.sleep(1)
 print("Thank you for using the program")
 # Optionally, you can add code here to release resources and close windows
