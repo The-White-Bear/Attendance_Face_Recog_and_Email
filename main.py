@@ -6,31 +6,31 @@ from datetime import datetime
 import pickle
 import openpyxl
 import time
+
 path = r'student_images'
 attendee = []
 images = []
 classNames = []
 mylist = os.listdir(path)
 
-
-now = datetime.now()  # date time cho tên cột điểm danh
+now = datetime.now()
 date_str = now.strftime('%d-%B-%Y')
-
 
 sobuoi_filename = 'sobuoi.txt'
 if not os.path.exists(sobuoi_filename):
     with open(sobuoi_filename, 'w') as f:
         f.write('1')
+
 with open(sobuoi_filename, 'r') as f:
     sobuoi_str = f.read()
-    if sobuoi_str.strip():  # Kiểm tra xem chuỗi không phải là chuỗi rỗng
+    if sobuoi_str.strip():
         sobuoi = int(sobuoi_str)
     else:
         sobuoi = 1
 col_number = sobuoi
+
 with open(sobuoi_filename, 'w') as f:
     f.write(f'{sobuoi+1}')
-
 
 with open('Attendance.csv', 'w') as f:
     f.write('')
@@ -39,8 +39,6 @@ for cl in mylist:
     curImg = cv2.imread(f'{path}/{cl}')
     images.append(curImg)
     classNames.append(os.path.splitext(cl)[0])
-
-
 def findEncodings(images):
     encodeList = []
     for img in images:
@@ -48,9 +46,15 @@ def findEncodings(images):
         encoded_face = face_recognition.face_encodings(img)[0]
         encodeList.append(encoded_face)
     return encodeList
+# Load the trained data if it exists, or train and save it
+if os.path.exists('encoded_faces.pkl'):
+    with open('encoded_faces.pkl', 'rb') as f:
+        encoded_face_train = pickle.load(f)
+else:
+    encoded_face_train = findEncodings(images)
+    with open('encoded_faces.pkl', 'wb') as f:
+        pickle.dump(encoded_face_train, f)
 
-
-encoded_face_train = findEncodings(images)
 
 
 def markAttendance(name):
@@ -66,64 +70,59 @@ def markAttendance(name):
             time = now.strftime('%I:%M:%S:%p')
             date = now.strftime('%d-%B-%Y')
             f.writelines(f'{name}, {time}, {date}\n')
-
             attendee.append(name.upper())
-
 
 def write_to_excel(name):
     wb = openpyxl.load_workbook("DiemDanh.xlsx")
-    sheetname=wb.sheetnames
+    sheetname = wb.sheetnames
     ws = wb[sheetname[0]]
-    # Convert the session number to column letter (D, E, F, ...)
     col_name = chr(ord('E') + col_number)
-    # Cell in row 1 for the session's attendance column
     cell_name = f"{col_name}1"
     ws[cell_name] = f"Buoi diem danh thu{col_number}- {date_str}"
 
     for i in range(2, 80):
         if ws.cell(row=i, column=2).value in attendee:
-            # Set the cell format to Boolean and write True
             ws.cell(row=i, column=col_number + 5).value = True
         else:
-            # Set the cell format to Boolean and write False
             ws.cell(row=i, column=col_number + 5).value = False
 
     wb.save("DiemDanh.xlsx")
 
-
 def count_missing():
     wb = openpyxl.load_workbook("DiemDanh.xlsx")
-    sheetname=wb.sheetnames
+    sheetname = wb.sheetnames
     ws = wb[sheetname[0]]
     ws['Z1'] = "Sobuoivang"
 
-    for row in range(2, 80):  # Dynamically determine the last row
+    for row in range(2, 80):
         false_count = 0
-        for col in range(6, 26):  # Columns E to Q are columns 5 to 16
+        for col in range(6, 26):
             cell_value = ws.cell(row=row, column=col).value
             if cell_value == False:
                 false_count += 1
         ws.cell(row=row, column=26, value=false_count)
     wb.save("DiemDanh.xlsx")
+
 def create_dsvang_file():
     wb = openpyxl.load_workbook("DiemDanh.xlsx")
     sheetname = wb.sheetnames[0]
     ws = wb[sheetname]
 
-    dsvang = []  # Danh sách tên của những người vắng hơn hoặc bằng 2 buổi
-    for row in range(2, 80):  # Tính toán dựa trên số dòng thực tế của bảng
+    dsvang = []
+    for row in range(2, 80):
         sobuoivang = ws.cell(row=row, column=26).value
         if sobuoivang is not None and sobuoivang >= 2:
             ten = ws.cell(row=row, column=2).value
             dsvang.append(ten)
 
-    # Ghi danh sách vào tệp "dsvang.txt"
     with open("dsvang.txt", "w") as f:
         for ten in dsvang:
             f.write(f"{ten}\n")
 
     wb.close()
+
 cap = cv2.VideoCapture(0)
+
 try:
     while True:
         success, img = cap.read()
@@ -152,13 +151,13 @@ try:
         cv2.imshow('webcam', img)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+
 except KeyboardInterrupt:
-    pass  # This catches ctrl+C
+    pass
 
 count_missing()
-create_dsvang_file()  # Call count_missing even if you manually interrupt the program
+create_dsvang_file()
 time.sleep(1)
 print("Thank you for using the program")
-# Optionally, you can add code here to release resources and close windows
 cap.release()
 cv2.destroyAllWindows()
