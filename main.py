@@ -6,17 +6,34 @@ from datetime import datetime
 import pickle
 import openpyxl
 import time
-
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import automail 
 path = r'student_images'
-attendee = []
+attendee = []  #danh sách sinh viên có mặt trong buổi điểm danh 
 images = []
 classNames = []
 mylist = os.listdir(path)
+email_to_sent=[]   # mảng chứa địa chỉ email của sinh viên vắng >=2 buổi 
+
+
+data_path = r'D:\Work_space\Attendance_Face_Recog_and_Email\DiemDanh.xlsx'   #thông tin gửi email
+index_path = r'D:\Work_space\Attendance_Face_Recog_and_Email\passcv.html'
+sender_email = "clbsomediaptit@gmail.com"
+sender_password = "gvszzolbdxqlviyi"
+
+
+num_of_student=0   #lấy số lượng sinh viên từ số hàng trong file danh sách
+wb=openpyxl.load_workbook("DiemDanh.xlsx")
+sheetname=wb.sheetnames
+sheet=wb[sheetname[0]]
+num_of_student=sheet.max_row
 
 now = datetime.now()
 date_str = now.strftime('%d-%B-%Y')
 
-sobuoi_filename = 'sobuoi.txt'
+sobuoi_filename = 'sobuoi.txt'          #doc so buoi tu file
 if not os.path.exists(sobuoi_filename):
     with open(sobuoi_filename, 'w') as f:
         f.write('1')
@@ -32,7 +49,9 @@ col_number = sobuoi
 with open(sobuoi_filename, 'w') as f:
     f.write(f'{sobuoi+1}')
 
-with open('Attendance.csv', 'w') as f:
+with open('Attendance.csv', 'w') as f:  #clear danh sach diem danh
+    f.write('')
+with open('dsvang.txt', 'w') as f:   #clear danh sach vang
     f.write('')
 
 for cl in mylist:
@@ -54,8 +73,6 @@ else:
     encoded_face_train = findEncodings(images)
     with open('encoded_faces.pkl', 'wb') as f:
         pickle.dump(encoded_face_train, f)
-
-
 
 def markAttendance(name):
     write_to_excel(name)
@@ -80,7 +97,7 @@ def write_to_excel(name):
     cell_name = f"{col_name}1"
     ws[cell_name] = f"Buoi diem danh thu{col_number}- {date_str}"
 
-    for i in range(2, 80):
+    for i in range(2, num_of_student):
         if ws.cell(row=i, column=2).value in attendee:
             ws.cell(row=i, column=col_number + 5).value = True
         else:
@@ -92,15 +109,16 @@ def count_missing():
     wb = openpyxl.load_workbook("DiemDanh.xlsx")
     sheetname = wb.sheetnames
     ws = wb[sheetname[0]]
-    ws['Z1'] = "Sobuoivang"
-
-    for row in range(2, 80):
+    ws['Y1'] = "Sobuoivang"
+    for row in range(2, num_of_student):
         false_count = 0
-        for col in range(6, 26):
+        for col in range(6, 25):
             cell_value = ws.cell(row=row, column=col).value
             if cell_value == False:
                 false_count += 1
-        ws.cell(row=row, column=26, value=false_count)
+        if false_count>=2:              #Nếu vắng >= 2 buổi, thêm email vào danh sách để chuẩn bị gửi mail
+            email_to_sent.append(ws.cell(row=row, column=5).value)   
+        ws.cell(row=row, column=25, value=false_count)
     wb.save("DiemDanh.xlsx")
 
 def create_dsvang_file():
@@ -109,18 +127,18 @@ def create_dsvang_file():
     ws = wb[sheetname]
 
     dsvang = []
-    for row in range(2, 80):
-        sobuoivang = ws.cell(row=row, column=26).value
-        if sobuoivang is not None and sobuoivang >= 2:
-            ten = ws.cell(row=row, column=2).value
-            dsvang.append(ten)
-
-    with open("dsvang.txt", "w") as f:
-        for ten in dsvang:
-            f.write(f"{ten}\n")
-
-    wb.close()
-
+    for row in range(2,num_of_student):
+        vang = ws.cell(row=row, column=col_number+5).value
+        if vang == False:
+            msv = ws.cell(row=row, column=2).value
+            ho = ws.cell(row=row, column=3).value 
+            ten = ws.cell(row=row, column=4).value
+            dsvang.append((msv, ho, ten)) 
+    
+    with open("dsvang.txt", "w", encoding="utf-8") as f:
+        for msv,ho, ten in dsvang:
+            f.write(f"{msv}, {ho} {ten}\n") 
+    wb.close()    
 cap = cv2.VideoCapture(0)
 
 try:
@@ -157,6 +175,7 @@ except KeyboardInterrupt:
 
 count_missing()
 create_dsvang_file()
+automail.send_emails(data_path, index_path, sender_email, sender_password)
 time.sleep(1)
 print("Thank you for using the program")
 cap.release()
