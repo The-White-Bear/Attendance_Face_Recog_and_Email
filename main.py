@@ -9,31 +9,36 @@ import time
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import automail 
+import automail
+
+# Path to the directory containing student images
 path = r'student_images'
-attendee = []  #danh sách sinh viên có mặt trong buổi điểm danh 
+attendee = []  # List of students present during attendance
 images = []
 classNames = []
 mylist = os.listdir(path)
-email_to_sent=[]   # mảng chứa địa chỉ email của sinh viên vắng >=2 buổi 
 
+# Paths and credentials for sending emails
+data_path = r'DiemDanh.xlsx'
+index_path = r'index.html'
+sender_email = "duythong.ptit@gmail.com"
+sender_password = "crvesmqxynevirts"
 
-data_path = r'D:\Work_space\Attendance_Face_Recog_and_Email\DiemDanh.xlsx'   #thông tin gửi email
-index_path = r'D:\Work_space\Attendance_Face_Recog_and_Email\passcv.html'
-sender_email = "clbsomediaptit@gmail.com"
-sender_password = "gvszzolbdxqlviyi"
+# Number of students (get from the number of rows in the student list file)
+num_of_student = 0
+wb = openpyxl.load_workbook("DiemDanh.xlsx")
+sheetname = wb.sheetnames
+sheet = wb[sheetname[0]]
+num_of_student = sheet.max_row
 
-
-num_of_student=0   #lấy số lượng sinh viên từ số hàng trong file danh sách
-wb=openpyxl.load_workbook("DiemDanh.xlsx")
-sheetname=wb.sheetnames
-sheet=wb[sheetname[0]]
-num_of_student=sheet.max_row
-
+# Get the current date
 now = datetime.now()
 date_str = now.strftime('%d-%B-%Y')
 
-sobuoi_filename = 'sobuoi.txt'          #doc so buoi tu file
+# File to store the number of attendance sessions
+sobuoi_filename = 'sobuoi.txt'
+
+# Read the current session number from the file or set it to 1
 if not os.path.exists(sobuoi_filename):
     with open(sobuoi_filename, 'w') as f:
         f.write('1')
@@ -44,20 +49,26 @@ with open(sobuoi_filename, 'r') as f:
         sobuoi = int(sobuoi_str)
     else:
         sobuoi = 1
+
 col_number = sobuoi
 
+# Increment the session number and write it back to the file
 with open(sobuoi_filename, 'w') as f:
     f.write(f'{sobuoi+1}')
 
-with open('Attendance.csv', 'w') as f:  #clear danh sach diem danh
+# Clear the attendance and absent lists
+with open('Attendance.csv', 'w') as f:
     f.write('')
-with open('dsvang.txt', 'w') as f:   #clear danh sach vang
+with open('absent_list.txt', 'w') as f:
     f.write('')
 
+# Load student images and their names
 for cl in mylist:
     curImg = cv2.imread(f'{path}/{cl}')
     images.append(curImg)
     classNames.append(os.path.splitext(cl)[0])
+
+# Function to encode faces in the images
 def findEncodings(images):
     encodeList = []
     for img in images:
@@ -65,6 +76,7 @@ def findEncodings(images):
         encoded_face = face_recognition.face_encodings(img)[0]
         encodeList.append(encoded_face)
     return encodeList
+
 # Load the trained data if it exists, or train and save it
 if os.path.exists('encoded_faces.pkl'):
     with open('encoded_faces.pkl', 'rb') as f:
@@ -74,6 +86,7 @@ else:
     with open('encoded_faces.pkl', 'wb') as f:
         pickle.dump(encoded_face_train, f)
 
+# Function to mark attendance in the Excel sheet
 def markAttendance(name):
     write_to_excel(name)
     with open('Attendance.csv', 'r+') as f:
@@ -89,13 +102,14 @@ def markAttendance(name):
             f.writelines(f'{name}, {time}, {date}\n')
             attendee.append(name.upper())
 
+# Function to write attendance to the Excel sheet
 def write_to_excel(name):
     wb = openpyxl.load_workbook("DiemDanh.xlsx")
     sheetname = wb.sheetnames
     ws = wb[sheetname[0]]
     col_name = chr(ord('E') + col_number)
     cell_name = f"{col_name}1"
-    ws[cell_name] = f"Buoi diem danh thu{col_number}- {date_str}"
+    ws[cell_name] = f"Attendance Session {col_number} - {date_str}"
 
     for i in range(2, num_of_student):
         if ws.cell(row=i, column=2).value in attendee:
@@ -105,29 +119,29 @@ def write_to_excel(name):
 
     wb.save("DiemDanh.xlsx")
 
-def count_missing():
+# Function to count the number of absences for each student
+def count_absent():
     wb = openpyxl.load_workbook("DiemDanh.xlsx")
     sheetname = wb.sheetnames
     ws = wb[sheetname[0]]
-    ws['Y1'] = "Sobuoivang"
+    ws['Y1'] = "Number of Absences"
     for row in range(2, num_of_student):
         false_count = 0
         for col in range(6, 25):
             cell_value = ws.cell(row=row, column=col).value
             if cell_value == False:
-                false_count += 1
-        if false_count>=2:              #Nếu vắng >= 2 buổi, thêm email vào danh sách để chuẩn bị gửi mail
-            email_to_sent.append(ws.cell(row=row, column=5).value)   
+                false_count += 1 
         ws.cell(row=row, column=25, value=false_count)
     wb.save("DiemDanh.xlsx")
 
-def create_dsvang_file():
+# Function to create a file listing absent students
+def create_absent_file():
     wb = openpyxl.load_workbook("DiemDanh.xlsx")
     sheetname = wb.sheetnames[0]
     ws = wb[sheetname]
 
     dsvang = []
-    for row in range(2,num_of_student):
+    for row in range(2, num_of_student):
         vang = ws.cell(row=row, column=col_number+5).value
         if vang == False:
             msv = ws.cell(row=row, column=2).value
@@ -135,10 +149,12 @@ def create_dsvang_file():
             ten = ws.cell(row=row, column=4).value
             dsvang.append((msv, ho, ten)) 
     
-    with open("dsvang.txt", "w", encoding="utf-8") as f:
-        for msv,ho, ten in dsvang:
+    with open("absent_list.txt", "w", encoding="utf-8") as f:
+        for msv, ho, ten in dsvang:
             f.write(f"{msv}, {ho} {ten}\n") 
     wb.close()    
+
+# Initialize the webcam
 cap = cv2.VideoCapture(0)
 
 try:
@@ -173,8 +189,9 @@ try:
 except KeyboardInterrupt:
     pass
 
-count_missing()
-create_dsvang_file()
+# Count absences, create absent file, and send emails
+count_absent()
+create_absent_file()
 automail.send_emails(data_path, index_path, sender_email, sender_password)
 time.sleep(1)
 print("Thank you for using the program")
