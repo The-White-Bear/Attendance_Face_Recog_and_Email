@@ -21,8 +21,8 @@ mylist = os.listdir(path)
 # Paths and credentials for sending emails
 data_path = r'DiemDanh.xlsx'  
 index_path = r'index.html'   #email template , use $NAME to replace later
-sender_email = "duythong.ptit@gmail.com"  #Insert your email and password
-sender_password = "crvesmqxynevirts"  
+sender_email = ""  #Insert your email and password
+sender_password = ""  
 
 # Number of students (get from the number of rows in the student list file)
 num_of_student = 0
