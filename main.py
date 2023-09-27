@@ -21,8 +21,8 @@ mylist = os.listdir(path)
 # Paths and credentials for sending emails
 data_path = r'DiemDanh.xlsx'  
 index_path = r'index.html'   #email template , use $NAME to replace later
-sender_email = ""  #Insert your email and password
-sender_password = ""  
+sender_email = "duythong.ptit@gmail.com"  #Insert your email and password
+sender_password = "crvesmqxynevirts"  
 
 # Number of students (get from the number of rows in the student list file)
 num_of_student = 0
@@ -155,45 +155,48 @@ def create_absent_file():
     wb.close()    
 
 # Initialize the webcam
-cap = cv2.VideoCapture(0)
+def main():
+    cap = cv2.VideoCapture(0)
+    try:
+        while True:
+            success, img = cap.read()
+            imgS = cv2.resize(img, (0, 0), None, 0.25, 0.25)
+            imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
+            faces_in_frame = face_recognition.face_locations(imgS)
+            encoded_faces = face_recognition.face_encodings(imgS, faces_in_frame)
+            for encode_face, faceloc in zip(encoded_faces, faces_in_frame):
+                matches = face_recognition.compare_faces(
+                    encoded_face_train, encode_face)
+                faceDist = face_recognition.face_distance(
+                    encoded_face_train, encode_face)
+                matchIndex = np.argmin(faceDist)
+                print(matchIndex)
+                if matches[matchIndex]:
+                    name = classNames[matchIndex].upper()
+                    y1, x2, y2, x1 = faceloc
+                    y1, x2, y2, x1 = y1*4, x2*4, y2*4, x1*4
+                    cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                    cv2.rectangle(img, (x1, y2-35), (x2, y2),
+                                (0, 255, 0), cv2.FILLED)
+                    cv2.putText(img, name, (x1+6, y2-5),
+                                cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
+                    markAttendance(name.upper())
 
-try:
-    while True:
-        success, img = cap.read()
-        imgS = cv2.resize(img, (0, 0), None, 0.25, 0.25)
-        imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
-        faces_in_frame = face_recognition.face_locations(imgS)
-        encoded_faces = face_recognition.face_encodings(imgS, faces_in_frame)
-        for encode_face, faceloc in zip(encoded_faces, faces_in_frame):
-            matches = face_recognition.compare_faces(
-                encoded_face_train, encode_face)
-            faceDist = face_recognition.face_distance(
-                encoded_face_train, encode_face)
-            matchIndex = np.argmin(faceDist)
-            print(matchIndex)
-            if matches[matchIndex]:
-                name = classNames[matchIndex].upper()
-                y1, x2, y2, x1 = faceloc
-                y1, x2, y2, x1 = y1*4, x2*4, y2*4, x1*4
-                cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                cv2.rectangle(img, (x1, y2-35), (x2, y2),
-                              (0, 255, 0), cv2.FILLED)
-                cv2.putText(img, name, (x1+6, y2-5),
-                            cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
-                markAttendance(name.upper())
+            cv2.imshow('webcam', img)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
-        cv2.imshow('webcam', img)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+    except KeyboardInterrupt:
+        pass
 
-except KeyboardInterrupt:
-    pass
+    # Count absences, create absent file, and send emails
+    cap.release()
+    count_absent()
+    create_absent_file()
+    automail.send_emails(data_path, index_path, sender_email, sender_password)
+    time.sleep(1)
+    print("Thank you for using the program")
 
-# Count absences, create absent file, and send emails
-count_absent()
-create_absent_file()
-automail.send_emails(data_path, index_path, sender_email, sender_password)
-time.sleep(1)
-print("Thank you for using the program")
-cap.release()
-cv2.destroyAllWindows()
+    cv2.destroyAllWindows()
+if __name__ == '__main__':
+    main()
