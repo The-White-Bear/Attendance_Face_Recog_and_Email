@@ -1,4 +1,3 @@
-B21DCCN900, Phạm Hữu Quốc Anh
 B21DCCN169, Đào Quang Bảo
 B21DCCN171, Bùi Thanh Bình
 B21DCCN177, Phạm Quỳnh Chi
@@ -63,7 +62,6 @@ B21DCCN815, Louksone Sihalath
 B21DCCN662, Phạm Thành Thái
 B21DCCN678, Nguyễn Đắc Thành
 B21DCCN682, Vũ Duy Thành
-B21DCCN669, Nguyễn Quang Thắng
 B19DCCN592, Nguyễn Hữu Toàn
 B21DCCN753, Phạm Văn Tú
 B21DCCN756, Lê Anh Tuấn

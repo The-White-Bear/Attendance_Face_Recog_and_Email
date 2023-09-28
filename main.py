@@ -148,6 +148,7 @@ def create_absent_file():
     wb.close()    
 
 # Initialize the webcam
+
 def main():
     cap = cv2.VideoCapture(0)
     try:
@@ -174,8 +175,17 @@ def main():
                     cv2.putText(img, name, (x1+6, y2-5),
                                 cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
                     markAttendance(name.upper())
+                else:
+                    y1, x2, y2, x1 = faceloc
+                    y1, x2, y2, x1 = y1*4, x2*4, y2*4, x1*4
+                    cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                    cv2.rectangle(img, (x1, y2-35), (x2, y2),
+                                (0, 255, 0), cv2.FILLED)
+                    cv2.putText(img, 'UNKNOWN ', (x1+6, y2-5),
+                                cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
 
-            cv2.imshow('webcam', img)
+                    
+            cv2.imshow('Diem danh', img)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
