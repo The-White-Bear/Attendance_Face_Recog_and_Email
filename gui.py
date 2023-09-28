@@ -2,9 +2,13 @@ import tkinter as tk
 from tkinter import END, Text, ttk
 from tkinter import filedialog
 import tkinter
+
 from PIL import Image, ImageTk
 import customtkinter
 from customtkinter import CTkSegmentedButton
+
+import main
+import automail
 
 
 def screen_2():
