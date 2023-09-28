@@ -11,12 +11,12 @@ import main
 import automail
 
 
-def screen_2():
+def go_to_screen2():    
     play_frame.pack()
     main_frame.pack_forget()
 
 
-def screen_1():
+def back_to_screen1():
     main_frame.pack()
     play_frame.pack_forget()
 
@@ -24,16 +24,16 @@ def back_to_screen_2():
     play_frame.pack()
     list_stu_frame.pack_forget() 
     
-def start_clicked():
-    print('')
+def open_camera():
+    print("start click")
 
-def end_clicked():
+def show_list():
     list_stu_frame.pack()
     play_frame.pack_forget()
 
 
 def show_clicked():
-    print("")
+    print("print show click")
 
 
 def add_path():
@@ -41,8 +41,7 @@ def add_path():
     # Thực hiện xử lý với đường dẫn được chọn
 
 
-def show_list():
-    print()
+
 
 def send_mail():
     automail.send_emails()
@@ -69,7 +68,7 @@ bottom_frame.pack()
 image = Image.open("app_images/face.jpg")
 image = image.resize((400, 296))  # Resize the image as needed
 photo = ImageTk.PhotoImage(image)
-next_button = tk.Button(main_frame, image=photo, bd=0, command=screen_2)
+next_button = tk.Button(main_frame, image=photo, bd=0, command=go_to_screen2)
 next_button.photo = photo
 next_button.place(relx=0.5, rely=0.55, anchor=tk.CENTER, width=400, height=290)
 
@@ -83,7 +82,7 @@ image_label.place(relx=0.05, rely=0.05, anchor=tk.NW)
 
 # Title App
 font_title = customtkinter.CTkFont(family="Montserrat", size=25, weight="bold")
-text_label = tk.Label(main_frame, text="FACE RECOGNITION PTIT",
+text_label = tk.Label(main_frame, text="PTIT ATTENDANCE SYSTEM",
                       font=font_title, fg="white", bg="red")
 text_label.place(relx=0.5, rely=0.1, anchor=tk.N)
 
@@ -101,7 +100,7 @@ bottom_frame.pack()
 
 # App title ở màn hình 2
 font_title = customtkinter.CTkFont(family="Montserrat", size=12, weight="bold")
-text_label = tk.Label(play_frame, text="Face Recognition PTIT",
+text_label = tk.Label(play_frame, text="PTIT ATTENDANCE SYSTEM ",
                       font=font_title, fg="white", bg="red")
 text_label.place(relx=0.16, rely=0.025, anchor=tk.N)
 
@@ -109,22 +108,21 @@ text_label.place(relx=0.16, rely=0.025, anchor=tk.N)
 image = Image.open("app_images/image1.png")
 image = image.resize((800, 200))  # Resize the image as needed
 photo = ImageTk.PhotoImage(image)
-back_button = tk.Button(play_frame, image=photo, command=start_clicked)
+back_button = tk.Button(play_frame, image=photo, command=open_camera)
 back_button.photo = photo
 back_button.place(relx=0, rely=0.08, width=800, height=300)
 
-add_path_button = ttk.Button(
-    play_frame, text="Thêm lớp học", style="Custom.TButton", command=add_path)
-ds_vang = ttk.Button(
-    play_frame, text="Sinh viên chưa điểm danh", style="Custom.TButton", command=end_clicked)
 
-# student_button = ttk.Button(play_frame, text="Danh sách học sinh chưa được điểm danh hôm nay", command=end_clicked)
+ds_vang = ttk.Button(
+    play_frame, text="Sinh viên chưa điểm danh", style="Custom.TButton", command=show_list)
+
+# student_button = ttk.Button(play_frame, text="Danh sách học sinh chưa được điểm danh hôm nay", command=show_list)
 # send_email_button = ttk.Button(play_frame, text="Sent Email", style="TButton", command=show_clicked)
 # Back Button
 image = Image.open("app_images/ptit.png")  # Replace with your image file path
 image = image.resize((40, 40))  # Resize the image as needed
 photo = ImageTk.PhotoImage(image)
-back_button = tk.Button(play_frame, image=photo, command=screen_1)
+back_button = tk.Button(play_frame, image=photo, command=back_to_screen1)
 back_button.photo = photo
 back_button.place(relx=0.01, rely=0.01, anchor="nw", width=40, height=40)
 
@@ -138,8 +136,8 @@ style.configure("Custom.TButton",
                 font=("Montserrat", 10),
                 background="red",
                 foreground="black")  # Màu chữ trắng
-add_path_button.place(relx=0.9, rely=0.04, anchor=tk.CENTER)
-ds_vang.place(relx=0.7, rely=0.04, anchor=tk.CENTER)
+
+ds_vang.place(relx=0.85, rely=0.04, anchor=tk.CENTER)
 
 # student_button.place(relx=0.4, rely=0.61, anchor=tk.CENTER)
 # send_email_button.place(relx=0.6, rely=0.61, anchor=tk.CENTER)
@@ -181,6 +179,6 @@ for item in element_list:
    txt_output.insert(END, item + "\n")
 
 # Initially, show the Main Screen
-screen_1()
+back_to_screen1()
 
 app.mainloop()
