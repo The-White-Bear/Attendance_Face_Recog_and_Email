@@ -10,7 +10,6 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import automail
-
 # Path to the directory containing student images
 path = r'student_images'
 attendee = []  # List of students present during attendance

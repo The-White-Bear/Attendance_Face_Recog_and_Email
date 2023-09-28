@@ -4,6 +4,8 @@ from tkinter import filedialog
 import tkinter
 from PIL import Image, ImageTk
 import customtkinter
+import main
+import automail
 from customtkinter import CTkSegmentedButton
 
 
@@ -21,7 +23,7 @@ def back_to_screen_2():
     list_stu_frame.pack_forget() 
     
 def start_clicked():
-    print("")
+    main.main()
 
 
 def end_clicked():
@@ -42,7 +44,8 @@ def show_list():
     print()
 
 def send_mail():
-    print()
+    automail.send_emails
+
 # ----------------------------------------------------------------------------------------------------------------------
 app = tk.Tk()
 app.title("Face Recognition App")
