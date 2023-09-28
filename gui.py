@@ -2,21 +2,18 @@ import tkinter as tk
 from tkinter import END, Text, ttk
 from tkinter import filedialog
 import tkinter
-
 from PIL import Image, ImageTk
 import customtkinter
 from customtkinter import CTkSegmentedButton
 
-import main
 import automail
-
-
-def go_to_screen2():    
+import main
+def screen_2():
     play_frame.pack()
     main_frame.pack_forget()
 
 
-def back_to_screen1():
+def screen_1():
     main_frame.pack()
     play_frame.pack_forget()
 
@@ -24,16 +21,24 @@ def back_to_screen_2():
     play_frame.pack()
     list_stu_frame.pack_forget() 
     
-def open_camera():
-    print("start click")
+def start_clicked():
+    main.main()
 
-def show_list():
+
+def end_clicked():
+    
     list_stu_frame.pack()
+    with open("absent_list.txt", "r",encoding="utf-8") as f:
+        element_list = f.readlines()
+    txt_output = Text(list_stu_frame, height=50, width=50)
+    txt_output.pack()
+    for item in element_list:
+        txt_output.insert(END, item + "\n")
     play_frame.pack_forget()
 
 
 def show_clicked():
-    print("print show click")
+    print("")
 
 
 def add_path():
@@ -41,7 +46,8 @@ def add_path():
     # Thực hiện xử lý với đường dẫn được chọn
 
 
-
+def show_list():
+    print()
 
 def send_mail():
     automail.send_emails()
@@ -68,7 +74,7 @@ bottom_frame.pack()
 image = Image.open("app_images/face.jpg")
 image = image.resize((400, 296))  # Resize the image as needed
 photo = ImageTk.PhotoImage(image)
-next_button = tk.Button(main_frame, image=photo, bd=0, command=go_to_screen2)
+next_button = tk.Button(main_frame, image=photo, bd=0, command=screen_2)
 next_button.photo = photo
 next_button.place(relx=0.5, rely=0.55, anchor=tk.CENTER, width=400, height=290)
 
@@ -82,7 +88,7 @@ image_label.place(relx=0.05, rely=0.05, anchor=tk.NW)
 
 # Title App
 font_title = customtkinter.CTkFont(family="Montserrat", size=25, weight="bold")
-text_label = tk.Label(main_frame, text="PTIT ATTENDANCE SYSTEM",
+text_label = tk.Label(main_frame, text="FACE RECOGNITION PTIT",
                       font=font_title, fg="white", bg="red")
 text_label.place(relx=0.5, rely=0.1, anchor=tk.N)
 
@@ -100,7 +106,7 @@ bottom_frame.pack()
 
 # App title ở màn hình 2
 font_title = customtkinter.CTkFont(family="Montserrat", size=12, weight="bold")
-text_label = tk.Label(play_frame, text="PTIT ATTENDANCE SYSTEM ",
+text_label = tk.Label(play_frame, text="Face Recognition PTIT",
                       font=font_title, fg="white", bg="red")
 text_label.place(relx=0.16, rely=0.025, anchor=tk.N)
 
@@ -108,21 +114,21 @@ text_label.place(relx=0.16, rely=0.025, anchor=tk.N)
 image = Image.open("app_images/image1.png")
 image = image.resize((800, 200))  # Resize the image as needed
 photo = ImageTk.PhotoImage(image)
-back_button = tk.Button(play_frame, image=photo, command=open_camera)
+back_button = tk.Button(play_frame, image=photo, command=start_clicked)
 back_button.photo = photo
 back_button.place(relx=0, rely=0.08, width=800, height=300)
 
 
 ds_vang = ttk.Button(
-    play_frame, text="Sinh viên chưa điểm danh", style="Custom.TButton", command=show_list)
+    play_frame, text="Sinh viên chưa điểm danh", style="Custom.TButton", command=end_clicked)
 
-# student_button = ttk.Button(play_frame, text="Danh sách học sinh chưa được điểm danh hôm nay", command=show_list)
+# student_button = ttk.Button(play_frame, text="Danh sách học sinh chưa được điểm danh hôm nay", command=end_clicked)
 # send_email_button = ttk.Button(play_frame, text="Sent Email", style="TButton", command=show_clicked)
 # Back Button
 image = Image.open("app_images/ptit.png")  # Replace with your image file path
 image = image.resize((40, 40))  # Resize the image as needed
 photo = ImageTk.PhotoImage(image)
-back_button = tk.Button(play_frame, image=photo, command=back_to_screen1)
+back_button = tk.Button(play_frame, image=photo, command=screen_1)
 back_button.photo = photo
 back_button.place(relx=0.01, rely=0.01, anchor="nw", width=40, height=40)
 
@@ -171,14 +177,9 @@ send = ttk.Button(
     list_stu_frame, text="Send Mail", style="Custom.TButton", command=send_mail)
 send.place(relx=0.9, rely=0.04, anchor=tk.CENTER)
 
-with open("absent_list.txt", "r",encoding="utf-8") as f:
-    element_list = f.readlines()
-txt_output = Text(list_stu_frame, height=50, width=50)
-txt_output.pack()
-for item in element_list:
-   txt_output.insert(END, item + "\n")
+
 
 # Initially, show the Main Screen
-back_to_screen1()
+screen_1()
 
 app.mainloop()

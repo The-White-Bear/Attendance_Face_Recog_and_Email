@@ -9,7 +9,6 @@ import time
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
 import automail
 
 # Path to the directory containing student images
@@ -18,12 +17,6 @@ attendee = []  # List of students present during attendance
 images = []
 classNames = []
 mylist = os.listdir(path)
-
-# Paths and credentials for sending emails
-data_path = r'DiemDanh.xlsx'  
-index_path = r'index.html'   #email template , use $NAME to replace later
-sender_email = ""  #Insert your email and password
-sender_password = ""  
 
 # Number of students (get from the number of rows in the student list file)
 num_of_student = 0
@@ -192,7 +185,6 @@ def main():
     # Count absences, create absent file, and send emails
     count_absent()
     create_absent_file()
-    automail.send_emails()
     time.sleep(1)
     print("Thank you for using the program")
     cap.release()
