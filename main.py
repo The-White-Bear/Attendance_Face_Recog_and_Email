@@ -9,7 +9,9 @@ import time
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+
 import automail
+
 # Path to the directory containing student images
 path = r'student_images'
 attendee = []  # List of students present during attendance
@@ -87,7 +89,6 @@ else:
 
 # Function to mark attendance in the Excel sheet
 def markAttendance(name):
-    write_to_excel(name)
     with open('Attendance.csv', 'r+') as f:
         myDataList = f.readlines()
         nameList = []
@@ -102,7 +103,7 @@ def markAttendance(name):
             attendee.append(name.upper())
 
 # Function to write attendance to the Excel sheet
-def write_to_excel(name):
+def write_to_excel():
     wb = openpyxl.load_workbook("DiemDanh.xlsx")
     sheetname = wb.sheetnames
     ws = wb[sheetname[0]]
@@ -126,7 +127,7 @@ def count_absent():
     ws['Y1'] = "Number of Absences"
     for row in range(2, num_of_student):
         false_count = 0
-        for col in range(6, 25):
+        for col in range(6, 24):
             cell_value = ws.cell(row=row, column=col).value
             if cell_value == False:
                 false_count += 1 
@@ -187,15 +188,14 @@ def main():
 
     except KeyboardInterrupt:
         pass
-
+    write_to_excel()
     # Count absences, create absent file, and send emails
-    cap.release()
     count_absent()
     create_absent_file()
-    automail.send_emails(data_path, index_path, sender_email, sender_password)
+    automail.send_emails()
     time.sleep(1)
     print("Thank you for using the program")
-
+    cap.release()
     cv2.destroyAllWindows()
 if __name__ == '__main__':
     main()

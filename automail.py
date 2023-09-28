@@ -3,7 +3,12 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import openpyxl
 
-def send_emails(data_path, index_path, sender_email, sender_password):
+def send_emails():
+        
+    data_path = r'DiemDanh.xlsx'  
+    index_path = r'index.html'   #email template , use $NAME to replace later
+    sender_email = "duythong.ptit@gmail.com"  #Insert your email and password
+    sender_password = "zjarmbbjvnxcybkd"    
     # Read email content from HTML file
     with open(index_path, "r", encoding="utf-8") as html_file:
         email_content = html_file.read()
@@ -39,7 +44,7 @@ def send_emails(data_path, index_path, sender_email, sender_password):
     wb.save(data_path)
 
     # Write recipient names and emails to a text file
-    with open("sent_emails.txt", "w", encoding="utf-8") as f:
+    with open("sent_emails.txt", "w+", encoding="utf-8") as f:
         for recipient in recipients:
             f.write(f"{recipient[0]}, {recipient[1]}\n")
 

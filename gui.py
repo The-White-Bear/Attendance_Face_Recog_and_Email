@@ -27,7 +27,6 @@ def back_to_screen_2():
 def start_clicked():
     print('')
 
-
 def end_clicked():
     list_stu_frame.pack()
     play_frame.pack_forget()
@@ -46,7 +45,7 @@ def show_list():
     print()
 
 def send_mail():
-    print()
+    automail.send_emails()
 
 # ----------------------------------------------------------------------------------------------------------------------
 app = tk.Tk()
