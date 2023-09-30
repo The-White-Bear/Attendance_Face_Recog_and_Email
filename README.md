@@ -1,44 +1,46 @@
-# Face Recognition and Automatic Email Sending
-
+# Face Recognition Attendance and Email Project
 
 ## Introduction
+This project uses facial recognition technology to perform attendance tracking in a classroom or event setting. It automatically records student attendance and sends email notifications to students who are absent for a specified number of sessions.
 
-This is a project that utilizes face recognition technology to mark attendance and send automatic emails when a recognized face is detected. This project can be applied in various scenarios, from time management in the workplace to door access security.
+## Installation
+Before running the project, you need to install the following prerequisites:
 
-## Key Features
+- Python 3.x
+- The required Python libraries are listed in the `requirements.txt` file.
 
-- Face recognition: The system uses a facial recognition model to identify the user's identity.
+To install the required libraries, run the following command in the project's root directory. 
 
-- Automatic attendance: When a face is successfully recognized, the system will automatically mark the user as present.
+###### IF YOU HAVE TROUBLE WHEN INSTALL DLIB OR FACE_RECOGNITION ,TRY TO INSTALL VISUAL STUDIO AND INSTALL C++. #####
 
-- Auto notification email: After successfully attending, the system will send an email to notify attendees who have been absent for more than 2 attendance sessions.
 
-## Usage Guide
+## Directory Structure
+Below is the directory structure of the project:
 
-1. **Setup Environment:**
-   - Ensure you have Python and the required libraries installed by using `requirements.txt`.
-   - Open CMD and run : pip install -r requirements.txt
-   -If you have trouble when install dlib, make sure that you installed Cmake and C++. I recommend you to use Visual Studio to install C++ compiler.
+- `.idea`: IDE-specific directory (if used).
+- `app_images`: Directory containing images attached in email notifications.
+- `student_images`: Directory containing student images (each image is named after the student's ID).
+- `__pycache__`: Directory created by Python.
+- `absent_list.txt`: List of absent students.
+- `Attendance.csv`: List of students and their attendance records.
+- `automail.py`: Code for sending email notifications to absent students.
+- `DiemDanh.xlsx`: Excel file storing attendance data.
+- `gui.py`: User interface code for the application.
+- `index.html`: Content attached in email notifications.
+- `main.py`: Main code for facial recognition and attendance tracking.
+- `README.md`: Current project description file.
+- `requirements.txt`: List of required libraries for the project.
+- `sent_emails.txt`: List of emails that have been sent.
+- `sobuoi.txt`: Number of attendance sessions.
 
-2. **Configuration Setup:**
-   - Configure the configuration file (`config.yml`) with necessary information such as email settings and facial recognition model configuration.
+## Usage
+This project has a user interface implemented in `gui.py`. The interface consists of the following pages:
+- Start Page: Allows you to initiate attendance tracking.
+- Attendance Page: Displays the facial recognition interface and saves data to `Attendance.csv`.
+- Absentee List Page: Displays the list of absent students and sends email notifications. There is a "Sent Emails" button to send email.
 
-3. **Run the Application:**
-   - Use the following command to run the application:
-     ```
-     python main.py
-     ```
+Just run gui.py , remember to check that file sobuoi.txt have been reset to 0, and File "DiemDanh.txt" in format : column B is Student id, column C and D is student name, column E is student email.
+## Contact
+If you have any questions or contributions, please feel free to reach out to us.
 
-4. **Monitor Results:**
-   - The application will display results in real-time and send automatic emails when a face is detected.
-
-## Contribution
-
-We welcome contributions from the community. If you'd like to contribute to this project, please create a pull request and describe the changes you propose in detail.
-
-## License
-
-This project is distributed under the [MIT License](LICENSE).
-
----
-**Note:** Please make sure to adhere to privacy and security rules when using this project. Do not use it for personal privacy infringements or illegal activities.
+This project is developed by me and my friend - Quang Thang.
