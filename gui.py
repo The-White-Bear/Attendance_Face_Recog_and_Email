@@ -87,11 +87,12 @@ image_label.photo = photo
 image_label.place(relx=0.05, rely=0.05, anchor=tk.NW)
 
 # Title App
-font_title = customtkinter.CTkFont(family="Montserrat", size=25, weight="bold")
-text_label = tk.Label(main_frame, text="FACE RECOGNITION PTIT",
+font_title = customtkinter.CTkFont(family="Montserrat", size=22, weight="bold")
+text_label = tk.Label(main_frame, text="WELCOME TO PTIT ATTENDANCE SYSTEM",
                       font=font_title, fg="white", bg="red")
 text_label.place(relx=0.5, rely=0.1, anchor=tk.N)
-
+text2 =  tk.Label(main_frame, text="click anywhere to start",font=font_title, fg="white", bg="red")
+text2.place(relx=0.5, rely=0.9, anchor=tk.N)
 # -----------------------------------------------------------------------------------------------------------------
 # Màn hình thứ 2
 play_frame = tk.Frame(app, bg="red", width=800, height=600)
@@ -105,22 +106,22 @@ bottom_frame = tk.Frame(play_frame, width=800, height=550, bg="white")
 bottom_frame.pack()
 
 # App title ở màn hình 2
-font_title = customtkinter.CTkFont(family="Montserrat", size=12, weight="bold")
-text_label = tk.Label(play_frame, text="Face Recognition PTIT",
+font_title = customtkinter.CTkFont(family="Montserrat", size=16, weight="bold")
+text_label = tk.Label(play_frame, text="PTIT ATTENDANCE SYSTEM",
                       font=font_title, fg="white", bg="red")
-text_label.place(relx=0.16, rely=0.025, anchor=tk.N)
+text_label.place(relx=0.5, rely=0.025, anchor=tk.N)
 
 # Start Button
 image = Image.open("app_images/image1.png")
-image = image.resize((800, 200))  # Resize the image as needed
+image = image.resize((800, 550))  # Resize the image as needed
 photo = ImageTk.PhotoImage(image)
 back_button = tk.Button(play_frame, image=photo, command=start_clicked)
 back_button.photo = photo
-back_button.place(relx=0, rely=0.08, width=800, height=300)
+back_button.place(relx=0, rely=0.1, width=800, height=550)
 
 
 ds_vang = ttk.Button(
-    play_frame, text="Sinh viên chưa điểm danh", style="Custom.TButton", command=end_clicked)
+    play_frame, text="View absent list today", style="Custom.TButton", command=end_clicked)
 
 # student_button = ttk.Button(play_frame, text="Danh sách học sinh chưa được điểm danh hôm nay", command=end_clicked)
 # send_email_button = ttk.Button(play_frame, text="Sent Email", style="TButton", command=show_clicked)
@@ -161,9 +162,9 @@ canvas.pack()
 
 # App title ở màn hình 2
 font_title = customtkinter.CTkFont(family="Montserrat", size=12, weight="bold")
-text_label = tk.Label(list_stu_frame, text="Face Recognition PTIT",
+text_label = tk.Label(list_stu_frame, text="STUDENT ABSENT LIST TODAY",
                       font=font_title, fg="white", bg="red")
-text_label.place(relx=0.16, rely=0.025, anchor=tk.N)
+text_label.place(relx=0.5, rely=0.025, anchor=tk.N)
 
 # Back Button
 image = Image.open("app_images/ptit.png")  # Replace with your image file path
