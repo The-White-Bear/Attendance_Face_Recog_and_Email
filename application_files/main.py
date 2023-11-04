@@ -185,7 +185,7 @@ def main():
                                 cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
 
                     
-            cv2.imshow('Diem danh', img)
+            cv2.imshow('CHECKING ATTENDANCE | PRESS Q TO EXIT', img)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 

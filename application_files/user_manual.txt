@@ -1,0 +1,38 @@
+User Manual for Face Recognition Attendance System
+
+## Screen 1
+
+* This is the start screen, where you can choose to view the user manual or click start.
+* To view the user manual, click the "User Manual" button.
+* To start the attendance system, click the "Start" button.
+
+## Screen 2
+
+* This is the attendance screen, where you can start taking attendance for students.
+* To start taking attendance, click the "Start" button.
+* To view a list of students who have not yet been marked as present, click the "View absent list today" button.
+
+## Screen 3
+
+* This is the absent list screen, which shows a list of all students who have not been marked as present for the current day.
+* To send an email to students who have missed more than 2 days of attendance, click the "Send Mail" button.
+
+## How to use the Face Recognition Attendance System
+
+1. On screen 1, click the "Start" button to begin taking attendance.
+2. On screen 2, students will need to stand in front of the camera and look directly at it.
+3. The system will automatically detect and recognize the student's face.
+4. Once the student has been recognized, the system will mark them as present.
+5. To view a list of students who have not yet been marked as present, click the "View absent list today" button.
+6. On screen 3, the system will display a list of all students who have not been marked as present for the current day.
+7. To send an email to students who have missed more than 2 days of attendance, click the "Send Mail" button.
+
+## Additional notes
+
+* The system can be used to take attendance for both students and staff.
+* The system can also be used to generate attendance reports.
+* To learn more about how to use the Face Recognition Attendance System, please refer to the user manual.
+
+## License
+This software dev by DuyThong and QuangThang,2 PTIT student.
+Feel free to use and modify

@@ -39,21 +39,29 @@ def end_clicked():
         txt_output.insert(END, item + "\n")
     play_frame.pack_forget()
 
-
-def show_clicked():
-    print("")
-
-
 def add_path():
     path = filedialog.askopenfilename()  # Hiển thị hộp thoại chọn tệp
     # Thực hiện xử lý với đường dẫn được chọn
-
-
-def show_list():
-    print()
-
 def send_mail():
     automail.send_emails()
+def open_user_manual():
+    # Provide the path to your user manual file here
+    user_manual_path = r'D:\Work_space\Attendance_Face_Recog_and_Email\application_files\user_manual.txt'
+    
+    try:
+        with open(user_manual_path, "r", encoding="utf-8") as manual_file:
+            user_manual_text = manual_file.read()
+            
+        # Create a new window to display the user manual text
+        manual_window = tk.Toplevel(app)
+        manual_window.title("User Manual")
+        
+        manual_text = Text(manual_window)
+        manual_text.pack()
+        manual_text.insert(END, user_manual_text)
+        
+    except Exception as e:
+        print(f"Error opening the user manual: {str(e)}")
 
 # ----------------------------------------------------------------------------------------------------------------------
 app = tk.Tk()
@@ -72,7 +80,6 @@ canvas.pack()
 # Tạo background trắng của màn hình 1
 bottom_frame = tk.Frame(main_frame, width=800, height=440, bg="white")
 bottom_frame.pack()
-
 # Image Button
 image = Image.open("app_images/face.jpg")
 image = image.resize((400, 296))  # Resize the image as needed
@@ -80,7 +87,6 @@ photo = ImageTk.PhotoImage(image)
 next_button = tk.Button(main_frame, image=photo, bd=0, command=screen_2)
 next_button.photo = photo
 next_button.place(relx=0.5, rely=0.55, anchor=tk.CENTER, width=400, height=290)
-
 # Logo
 image = Image.open("app_images/ptit.png")
 image = image.resize((100, 100))  # Resize the image as needed
@@ -94,8 +100,21 @@ font_title = customtkinter.CTkFont(family="Montserrat", size=22, weight="bold")
 text_label = tk.Label(main_frame, text="WELCOME TO PTIT ATTENDANCE SYSTEM",
                       font=font_title, fg="white", bg="red")
 text_label.place(relx=0.5, rely=0.1, anchor=tk.N)
-text2 =  tk.Label(main_frame, text="click anywhere to start",font=font_title, fg="white", bg="red")
-text2.place(relx=0.5, rely=0.9, anchor=tk.N)
+text2 =  tk.Label(main_frame, text="CLICK THE BUTTON TO START",font=font_title, fg="white", bg="red", anchor=tk.N)
+text2.place(relx=0.5, rely=0.8, anchor=tk.N)
+# Create a custom style for the "User Manual" button
+style = ttk.Style()
+style.configure("UserManual.TButton", 
+               foreground="red",  # Text color
+               background="#5681c7",  # Background color
+               font=("Arial", 10),  # Font style
+        
+               relief="raised"  # Button relief style
+              )
+
+user_manual_button = ttk.Button(main_frame, text="User Manual", command=open_user_manual, style="UserManual.TButton")
+user_manual_button.place(relx=0.5, rely=0.95, anchor=tk.CENTER, width=100, height=40)
+
 # -----------------------------------------------------------------------------------------------------------------
 # Màn hình thứ 2
 play_frame = tk.Frame(app, bg="red", width=800, height=600)
@@ -115,12 +134,22 @@ text_label = tk.Label(play_frame, text="PTIT ATTENDANCE SYSTEM",
 text_label.place(relx=0.5, rely=0.025, anchor=tk.N)
 
 # Start Button
-image = Image.open("app_images/image1.png")
-image = image.resize((800, 550))  # Resize the image as needed
-photo = ImageTk.PhotoImage(image)
-back_button = tk.Button(play_frame, image=photo, command=start_clicked)
-back_button.photo = photo
-back_button.place(relx=0, rely=0.1, width=800, height=550)
+# Create a Label for the background
+background_image = Image.open("app_images/image1.png")
+background_image = background_image.resize((800, 550))  # Resize the background image as needed
+background_photo = ImageTk.PhotoImage(background_image)
+background_label = tk.Label(play_frame, image=background_photo)
+background_label.photo = background_photo
+background_label.place(relx=0, rely=0.1, width=800, height=550)
+
+# Create the Start Button
+button_image = Image.open("app_images/button.png")  # Change to the desired button image
+button_photo = ImageTk.PhotoImage(button_image)
+start_button = tk.Button(play_frame, image=button_photo, command=start_clicked)
+start_button.photo = button_photo
+start_button.place(relx=0.85, rely=0.65, anchor=tk.CENTER, width=200, height=80)
+
+
 
 
 ds_vang = ttk.Button(
