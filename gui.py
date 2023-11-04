@@ -5,9 +5,12 @@ import tkinter
 from PIL import Image, ImageTk
 import customtkinter
 from customtkinter import CTkSegmentedButton
-
-import automail
-import main
+import sys
+import os
+application_files_dir = os.path.join(os.path.dirname(__file__), "application_files")
+sys.path.append(application_files_dir)
+import application_files.automail as automail
+import application_files.main as main
 def screen_2():
     play_frame.pack()
     main_frame.pack_forget()
@@ -28,7 +31,7 @@ def start_clicked():
 def end_clicked():
     
     list_stu_frame.pack()
-    with open("absent_list.txt", "r",encoding="utf-8") as f:
+    with open("attendance/absent_list.txt", "r",encoding="utf-8") as f:
         element_list = f.readlines()
     txt_output = Text(list_stu_frame, height=50, width=50)
     txt_output.pack()

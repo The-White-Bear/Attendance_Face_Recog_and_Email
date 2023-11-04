@@ -5,8 +5,8 @@ import openpyxl
 
 def send_emails():
         
-    data_path = r'DiemDanh.xlsx'  
-    index_path = r'index.html'   #email template , use $NAME to replace later
+    data_path = r'attendance/DiemDanh.xlsx'  
+    index_path = r'send_email/index.html'   #email template , use $NAME to replace later
     sender_email = "duythong.ptit@gmail.com"  #Insert your email and password
     sender_password = "zjarmbbjvnxcybkd"    
     # Read email content from HTML file

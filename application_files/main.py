@@ -20,7 +20,7 @@ mylist = os.listdir(path)
 
 # Number of students (get from the number of rows in the student list file)
 num_of_student = 0
-wb = openpyxl.load_workbook("DiemDanh.xlsx")
+wb = openpyxl.load_workbook("attendance/DiemDanh.xlsx")
 sheetname = wb.sheetnames
 sheet = wb[sheetname[0]]
 num_of_student = sheet.max_row
@@ -30,7 +30,7 @@ now = datetime.now()
 date_str = now.strftime('%d-%B-%Y')
 
 # File to store the number of attendance sessions
-sobuoi_filename = 'sobuoi.txt'
+sobuoi_filename = 'attendance/sobuoi.txt'
 
 # Read the current session number from the file or set it to 1
 if not os.path.exists(sobuoi_filename):
@@ -51,9 +51,9 @@ with open(sobuoi_filename, 'w') as f:
     f.write(f'{sobuoi+1}')
 
 # Clear the attendance and absent lists
-with open('Attendance.csv', 'w') as f:
+with open('attendance/Attendance.csv', 'w') as f:
     f.write('')
-with open('absent_list.txt', 'w') as f:
+with open('attendance/absent_list.txt', 'w') as f:
     f.write('')
 
 # Load student images and their names
@@ -72,17 +72,17 @@ def findEncodings(images):
     return encodeList
 
 # Load the trained data if it exists, or train and save it
-if os.path.exists('encoded_faces.pkl'):
-    with open('encoded_faces.pkl', 'rb') as f:
+if os.path.exists('application_files\encoded_faces.pkl'):
+    with open('application_files\encoded_faces.pkl', 'rb') as f:
         encoded_face_train = pickle.load(f)
 else:
     encoded_face_train = findEncodings(images)
-    with open('encoded_faces.pkl', 'wb') as f:
+    with open('application_files\encoded_faces.pkl', 'wb') as f:
         pickle.dump(encoded_face_train, f)
 
 # Function to mark attendance in the Excel sheet
 def markAttendance(name):
-    with open('Attendance.csv', 'r+') as f:
+    with open('attendance/Attendance.csv', 'r+') as f:
         myDataList = f.readlines()
         nameList = []
         for line in myDataList:
@@ -97,7 +97,7 @@ def markAttendance(name):
 
 # Function to write attendance to the Excel sheet
 def write_to_excel():
-    wb = openpyxl.load_workbook("DiemDanh.xlsx")
+    wb = openpyxl.load_workbook("attendance\DiemDanh.xlsx")
     sheetname = wb.sheetnames
     ws = wb[sheetname[0]]
     col_name = chr(ord('E') + col_number)
@@ -110,11 +110,11 @@ def write_to_excel():
         else:
             ws.cell(row=i, column=col_number + 5).value = False
 
-    wb.save("DiemDanh.xlsx")
+    wb.save("attendance\DiemDanh.xlsx")
 
 # Function to count the number of absences for each student
 def count_absent():
-    wb = openpyxl.load_workbook("DiemDanh.xlsx")
+    wb = openpyxl.load_workbook("attendance\DiemDanh.xlsx")
     sheetname = wb.sheetnames
     ws = wb[sheetname[0]]
     ws['Y1'] = "Number of Absences"
@@ -125,11 +125,11 @@ def count_absent():
             if cell_value == False:
                 false_count += 1 
         ws.cell(row=row, column=25, value=false_count)
-    wb.save("DiemDanh.xlsx")
+    wb.save("attendance\DiemDanh.xlsx")
 
 # Function to create a file listing absent students
 def create_absent_file():
-    wb = openpyxl.load_workbook("DiemDanh.xlsx")
+    wb = openpyxl.load_workbook("attendance\DiemDanh.xlsx")
     sheetname = wb.sheetnames[0]
     ws = wb[sheetname]
 
@@ -142,7 +142,7 @@ def create_absent_file():
             ten = ws.cell(row=row, column=4).value
             dsvang.append((msv, ho, ten)) 
     
-    with open("absent_list.txt", "w", encoding="utf-8") as f:
+    with open("attendance/absent_list.txt", "w", encoding="utf-8") as f:
         for msv, ho, ten in dsvang:
             f.write(f"{msv}, {ho} {ten}\n") 
     wb.close()    
@@ -196,7 +196,7 @@ def main():
     count_absent()
     create_absent_file()
     time.sleep(1)
-    print("Thank you for using the program")
+    print("Completed!")
     cap.release()
     cv2.destroyAllWindows()
 if __name__ == '__main__':
