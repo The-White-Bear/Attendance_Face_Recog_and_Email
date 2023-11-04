@@ -46,7 +46,7 @@ def send_mail():
     automail.send_emails()
 def open_user_manual():
     # Provide the path to your user manual file here
-    user_manual_path = r'D:\Work_space\Attendance_Face_Recog_and_Email\application_files\user_manual.txt'
+    user_manual_path = r'application_files\user_manual.txt'
     
     try:
         with open(user_manual_path, "r", encoding="utf-8") as manual_file:
@@ -108,7 +108,7 @@ style.configure("UserManual.TButton",
                foreground="red",  # Text color
                background="#5681c7",  # Background color
                font=("Arial", 10),  # Font style
-        
+               padding=(10, 5),  # Padding around the text
                relief="raised"  # Button relief style
               )
 
@@ -149,14 +149,9 @@ start_button = tk.Button(play_frame, image=button_photo, command=start_clicked)
 start_button.photo = button_photo
 start_button.place(relx=0.85, rely=0.65, anchor=tk.CENTER, width=200, height=80)
 
-
-
-
 ds_vang = ttk.Button(
     play_frame, text="View absent list today", style="Custom.TButton", command=end_clicked)
 
-# student_button = ttk.Button(play_frame, text="Danh sách học sinh chưa được điểm danh hôm nay", command=end_clicked)
-# send_email_button = ttk.Button(play_frame, text="Sent Email", style="TButton", command=show_clicked)
 # Back Button
 image = Image.open("app_images/ptit.png")  # Replace with your image file path
 image = image.resize((40, 40))  # Resize the image as needed
@@ -177,21 +172,12 @@ style.configure("Custom.TButton",
                 foreground="black")  # Màu chữ trắng
 
 ds_vang.place(relx=0.85, rely=0.04, anchor=tk.CENTER)
-
-# student_button.place(relx=0.4, rely=0.61, anchor=tk.CENTER)
-# send_email_button.place(relx=0.6, rely=0.61, anchor=tk.CENTER)
-
 # Man hinh 3---------------------------
 list_stu_frame = tk.Frame(app, bg="#93bbfa", width=800, height=600)
 
 # Tạo background đỏ của màn hình 3
 canvas = tk.Canvas(list_stu_frame, width=800, height=50, bg="red")
 canvas.pack()
-
-# # Tạo background trắng của màn hình 3
-# bottom_frame = tk.Frame(list_stu_frame, width=800, height=550, bg="white")
-# bottom_frame.pack()
-
 # App title ở màn hình 2
 font_title = customtkinter.CTkFont(family="Montserrat", size=12, weight="bold")
 text_label = tk.Label(list_stu_frame, text="STUDENT ABSENT LIST TODAY",
@@ -209,8 +195,6 @@ back_button.place(relx=0.01, rely=0.01, anchor="nw", width=40, height=40)
 send = ttk.Button(
     list_stu_frame, text="Send Mail", style="Custom.TButton", command=send_mail)
 send.place(relx=0.9, rely=0.04, anchor=tk.CENTER)
-
-
 
 # Initially, show the Main Screen
 screen_1()
